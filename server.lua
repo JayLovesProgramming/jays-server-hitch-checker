@@ -1,5 +1,5 @@
-Webhook = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN" -- replace with your own webhook URL
-UseWebhook = false -- set to true to send to discord webhook
+local Webhook = "https://discord.com/api/webhooks/" -- replace with your own webhook URL
+local UseWebhook = true -- set to true to send to discord webhook
 
 --Don't mess with anything below this line
 local ProfRunning = false
@@ -12,27 +12,27 @@ RegisterConsoleListener(function(channel, message)
         end
     end
     if string.find(message, "Stopped the recording") then
-        resname = GetCurrentResourceName()
-        respath = GetResourcePath(resname)
+        local resname = GetCurrentResourceName()
+        local respath = GetResourcePath(resname)
         ExecuteCommand("profiler saveJSON " .. respath .. "/profiler.json")
     end
     if string.find(message, "Save complete") then
-        oldnamets = 0
-        oldname = None
-        warnmessage = "The following resources are using more tick time than recommended, please check them out:"
-        discordmessage = warnmessage .. "\n"
-        json2 = LoadResourceFile(GetCurrentResourceName(), "profiler.json")
-        traceEvents = json.decode(json2).traceEvents
+        local oldnamets = 0
+        local oldname = None
+        local warnmessage = "The following resources are using more tick time than recommended, please check them out:"
+        local discordmessage = warnmessage .. "\n"
+        local json2 = LoadResourceFile(GetCurrentResourceName(), "profiler.json")
+        local traceEvents = json.decode(json2).traceEvents
         print(warnmessage)
         for k,v in pairs(traceEvents) do
             if string.find(v.name, "tick") then
                 if oldname == v.name then
-                    ticktime = v.ts - oldnamets
+                    local ticktime = v.ts - oldnamets
                     if ticktime > 5000 then
-                        name = string.gsub(v.name, "tick", "")
-                        name = string.gsub(name, "%(", "")
-                        name = string.gsub(name, "%)", "")
-                        name = string.gsub(name, " ", "")
+                        local name = string.gsub(v.name, "tick", "")
+                        local name = string.gsub(name, "%(", "")
+                        local name = string.gsub(name, "%)", "")
+                        local name = string.gsub(name, " ", "")
                         print(name .. ": " .. ticktime / 1000 .. "ms")
                         discordmessage = discordmessage .. name .. ": " .. ticktime / 1000 .. "ms\n"
                     end
